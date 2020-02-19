@@ -1,58 +1,56 @@
-import React, {Fragment} from 'react';
-import CounterDisplay from './components/CounterDisplay';
+import React, { Component } from 'react';
 
-class App extends React.Component{
+class App extends Component {
+
   constructor (props) {
     super(props);
     this.state = {
-      value: 0,
-      step: 1,
-    }
+      users: [],
+      isFetching: true,
+      error: null,
+    };
   }
+
   componentDidMount () {
-
-  }
-
-  componentDidUpdate(prevProps, prevState, snapshot){
-
-
-  }
-
-  incrementCounter = () => {
-    this.setState({
-                    value: this.state.value + this.state.step,
-                  })
-  }
-
-  decrementCounter = () => {
-    this.setState({
-                    value: this.state.value - this.state.step,
-                  })
-  }
-
-  handleChangeInputValue = newStep => {
-    if(!isNaN(newStep)){
-      this.setState(
-        {
-          step: newStep,
-        }
+    fetch('/users.json')
+      .then(response =>
+              response.json()
       )
+      .then(users => {
+        this.setState({
+                        isFetching: false,
+                        users
+                      });
+      })
+      .catch(err => {
+        this.setState({
+                        isFetching: false,
+                        error: err,
+                      });
+      });
+  }
+
+  render () {
+    const { isFetching, error, users } = this.state;
+    if (error) {
+      return <div>
+        Error
+      </div>;
+    } else if (isFetching) {
+      return <div>Loading...</div>;
+    } else {
+      return (<ol>
+        {
+          users.map(user => {
+            return (
+              <li key={user.id}>{`${user.firstName} ${user.lastName}`}</li>
+            );
+          })
+        }
+      </ol>);
     }
   }
 
-  render() {
-    return (
-      <Fragment>
-        <CounterDisplay value={this.state.value}/>
-      <button onClick={this.incrementCounter}>+</button>
-        <button onClick={this.decrementCounter}>-</button>
-        <input type="number" value={this.state.step} onChange={(e)=>{
-          this.handleChangeInputValue(Number(e.currentTarget.value))
-        }} />
-      </Fragment>
-
-    );
-  }
 }
 
 export default App;
