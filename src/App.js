@@ -1,15 +1,16 @@
 import React, { Component } from 'react';
-
+import UsersList from './components/UsersList';
+import UserCard from './components/UserCard';
 class App extends Component {
 
   constructor (props) {
     super(props);
-    this.state = {
-      users: [],
-      isFetching: true,
-      error: null,
-    };
   }
+
+  render(){
+    return <UserCard/>;
+  }
+/*
 
   componentDidMount () {
     fetch('/users.json')
@@ -50,6 +51,7 @@ class App extends Component {
       </ol>);
     }
   }
+*/
 
 }
 

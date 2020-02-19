@@ -1,18 +1,60 @@
-import React from 'react';
-import UserListItem from '../UserListItem';
+import React, { Component } from 'react';
+import { loadJson } from '../../utils';
+import UserCard from '../UserCard';
 
-function UsersList (props){
-  const users = props.users;
+class UsersList extends Component {
+  constructor (props) {
+    super(props);
+    this.state = {
+      users: [],
+      isFetching: false,
+      error: null,
+    };
+  }
 
-  return (
-    <ol>
-      {
-        users.map(user=>{
-          return <UserListItem key={user.id} user={user}/>
-        })
-      }
-    </ol>
-  );
+  renderUsers = () => {
+    const { users } = this.state;
+    return users.map((user) => {
+      return (
+
+        <li key={user.id}>{`${user.firstName} ${user.lastName}`}</li>
+
+      );
+    });
+  };
+
+  componentDidMount () {
+      loadJson('/users.json')
+      .then(users => {
+        this.setState({
+                        isFetching: false,
+                        users
+                      });
+      })
+      .catch(err => {
+        this.setState({
+                        isFetching: false,
+                        error: err,
+                      });
+      });
+  }
+
+  render () {
+    const { isFetching, error } = this.state;
+    if (error) {
+      return <div>Error</div>;
+    } else if (isFetching) {
+      return <div>Loading...</div>;
+    } else {
+      return (
+
+          <ol> {this.renderUsers()}
+          </ol>
+
+
+      );
+    }
+  }
 }
 
 export default UsersList;
