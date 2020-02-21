@@ -1,5 +1,5 @@
 import React from 'react';
-
+import styles from './Avatar.module.css'
 class Avatar extends React.Component {
   constructor (props) {
     super(props);
@@ -20,7 +20,7 @@ class Avatar extends React.Component {
     }
     else {
       return(
-        <img className={this.props.className} src={this.props.src} alt={this.props.alt}/>
+        <div className={styles.avatarContainer}><img className={this.props.className} src={this.props.src} alt={this.props.alt}/></div>
       )
     }
   }

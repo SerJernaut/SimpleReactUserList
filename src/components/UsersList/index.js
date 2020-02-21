@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import { loadJson } from '../../utils';
 import UserCard from '../UserCard';
+import Spinner from "../Spinner";
+import './UsersList.module.css';
+import styles from '../Spinner/Spinner.module.css'
 
 class UsersList extends Component {
   constructor (props) {
@@ -17,26 +20,39 @@ class UsersList extends Component {
     return users.map((user) => {
       return (
 
-        <li key={user.id}>{`${user.firstName} ${user.lastName}`}</li>
+        <li key={user.id} id={user.id}>
+            <UserCard user={user}/>
+        </li>
 
       );
     });
   };
 
+    renderSpinner = () =>{
+        const {isFetching} = this.state;
+        if(isFetching){
+            return <Spinner/>
+        }
+    }
+
   componentDidMount () {
-      loadJson('/users.json')
-      .then(users => {
-        this.setState({
-                        isFetching: false,
-                        users
-                      });
-      })
-      .catch(err => {
-        this.setState({
-                        isFetching: false,
-                        error: err,
-                      });
-      });
+          this.setState({
+              isFetching: true,
+          });
+          setTimeout(  ()=>{loadJson('/users.json')
+              .then(users => {
+                  this.setState({
+                      isFetching: false,
+                      users
+                  });
+              })
+              .catch(err => {
+                  this.setState({
+                      isFetching: false,
+                      error: err,
+                  });
+              })}, 5000)
+
   }
 
   render () {
@@ -44,12 +60,14 @@ class UsersList extends Component {
     if (error) {
       return <div>Error</div>;
     } else if (isFetching) {
-      return <div>Loading...</div>;
+      return <div className={styles.loadingUsers}>Подождите, пользователи загружаются <br/>
+      {this.renderSpinner()}</div>
     } else {
       return (
+        <ol>
+            {this.renderUsers()}
+        </ol>
 
-          <ol> {this.renderUsers()}
-          </ol>
 
 
       );
